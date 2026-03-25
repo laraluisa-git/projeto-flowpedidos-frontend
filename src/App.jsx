@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 
 import Layout from "./components/Layout.jsx";
 import ProtectedRoute from "./auth/ProtectedRoute.jsx";
+import { DataProvider } from "./data/DataContext.jsx";
 
 import Home from "./pages/Home.jsx";
 import Auth from "./pages/Auth.jsx";
@@ -25,7 +26,9 @@ export default function App() {
         path="/dashboard"
         element={
           <ProtectedRoute>
-            <Layout />
+            <DataProvider>
+              <Layout />
+            </DataProvider>
           </ProtectedRoute>
         }
       >
