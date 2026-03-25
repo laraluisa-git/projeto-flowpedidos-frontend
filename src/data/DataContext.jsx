@@ -11,17 +11,25 @@ export function DataProvider({ children }) {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    (async () => {
-      setLoading(true);
-      try {
-        const [o, p] = await Promise.all([listOrders(), listProducts()]);
-        setOrders(o ?? []);
-        setProducts(p ?? []);
-      } finally {
-        setLoading(false);
-      }
-    })().catch((e) => alert(e.message));
-  }, [refresh]);
+  const token = localStorage.getItem("token");
+
+  // 🔥 NÃO faz requisição se não estiver logado
+  if (!token) {
+    setLoading(false);
+    return;
+  }
+
+  (async () => {
+    setLoading(true);
+    try {
+      const [o, p] = await Promise.all([listOrders(), listProducts()]);
+      setOrders(o ?? []);
+      setProducts(p ?? []);
+    } finally {
+      setLoading(false);
+    }
+  })().catch((e) => alert(e.message));
+}, [refresh]);
 
   const value = useMemo(
     () => ({
