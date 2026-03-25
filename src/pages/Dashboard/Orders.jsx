@@ -83,14 +83,15 @@ export default function Orders() {
     if (!form.customerName || !form.deliveryAddress || !form.productId) { alert("Preencha cliente, endereço e produto."); return; }
     if (!form.quantity || form.quantity <= 0) { alert("Quantidade deve ser maior que zero."); return; }
 
-    const payload = {
-      customerName: form.customerName,
-      deliveryAddress: form.deliveryAddress,
-      productId: form.productId,
-      quantity: form.quantity,
-      priority: form.priority,
-      status: form.status,
-    };
+  const payload = {
+    customerName: form.customerName,
+    deliveryAddress: form.deliveryAddress,
+    productId: form.productId,
+    quantity: form.quantity,
+    priority: form.priority,
+    status: form.status,
+    deliveredAt: form.status === "entregue" ? new Date().toISOString() : null,
+  };
 
     (async () => {
       try {
@@ -118,15 +119,18 @@ export default function Orders() {
   }
 
   function setStatus(id, status) {
-    (async () => {
-      try {
-        await updateOrder(id, { status });
-        refreshData();
-      } catch (e) {
-        alert(e.message);
-      }
-    })();
-  }
+  (async () => {
+    try {
+      await updateOrder(id, {
+        status,
+        deliveredAt: status === "entregue" ? new Date().toISOString() : null,
+      });
+      refreshData();
+    } catch (e) {
+      alert(e.message);
+    }
+  })();
+}
 
   const rows = orders.map((o) => ({ ...o, productName: prodById.get(o.productId)?.name ?? "(produto removido)" }));
 
