@@ -1,8 +1,7 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo } from "react";
 import { Link } from "react-router-dom";
 import Table from "../../components/Table";
-import { listProducts } from "../../services/productService";
-import { listOrders } from "../../services/orderService";
+import { useData } from "../../data/DataContext";
 import {
   ResponsiveContainer,
   LineChart,
@@ -139,23 +138,7 @@ function ChartCard({ title, subtitle, children }) {
 }
 
 export default function Overview() {
-  const [refresh, setRefresh] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [orders, setOrders] = useState([]);
-  const [products, setProducts] = useState([]);
-
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
-      try {
-        const [o, p] = await Promise.all([listOrders(), listProducts()]);
-        setOrders(o ?? []);
-        setProducts(p ?? []);
-      } finally {
-        setLoading(false);
-      }
-    })().catch((e) => alert(e.message));
-  }, [refresh]);
+  const { orders, products, refresh: refreshData } = useData();
 
   const prodById = useMemo(() => {
     const map = new Map();
@@ -425,13 +408,13 @@ export default function Overview() {
 
                   <div style={{ display: "flex", gap: 10 }}>
 
-                    <button className="ov-refresh-btn" onClick={() => setRefresh(r => r + 1)}>
+                              <button className="ov-refresh-btn" onClick={() => refreshData()}>
 
-                      <IconRefresh />
+                                <IconRefresh />
 
-                      Atualizar
+                                Atualizar
 
-                    </button>
+                              </button>
 
                     <Link
 

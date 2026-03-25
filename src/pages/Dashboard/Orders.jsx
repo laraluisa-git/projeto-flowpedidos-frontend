@@ -1,9 +1,9 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import Card from "../../components/Card";
 import Table from "../../components/Table";
 import Modal from "../../components/Modal";
-import { listProducts } from "../../services/productService";
-import { listOrders, createOrder, updateOrder, deleteOrder as apiDeleteOrder } from "../../services/orderService";
+import { useData } from "../../data/DataContext";
+import { createOrder, updateOrder, deleteOrder as apiDeleteOrder } from "../../services/orderService";
 
 function todayKey() {
   const d = new Date();
@@ -40,29 +40,11 @@ const IconPlus = () => (
 );
 
 export default function Orders() {
-  const [refresh, setRefresh] = useState(0);
   const [open, setOpen]       = useState(false);
   const [editingId, setEditingId] = useState(null);
 
-  const [loading, setLoading] = useState(true);
-  const [orders, setOrders] = useState([]);
-  const [products, setProducts] = useState([]);
+  const { orders, products, refresh: refreshData } = useData();
 
-  async function loadAll() {
-    setLoading(true);
-    try {
-      const [o, p] = await Promise.all([listOrders(), listProducts()]);
-      setOrders(o ?? []);
-      setProducts(p ?? []);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    loadAll().catch((e) => alert(e.message));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refresh]);
 
   const prodById = useMemo(() => {
     const map = new Map();
@@ -116,7 +98,7 @@ export default function Orders() {
         else await updateOrder(editingId, payload);
         setOpen(false);
         resetModal();
-        setRefresh((n) => n + 1);
+        refreshData();
       } catch (e) {
         alert(e.message);
       }
@@ -128,7 +110,7 @@ export default function Orders() {
     (async () => {
       try {
         await apiDeleteOrder(id);
-        setRefresh((n) => n + 1);
+        refreshData();
       } catch (e) {
         alert(e.message);
       }
@@ -139,7 +121,7 @@ export default function Orders() {
     (async () => {
       try {
         await updateOrder(id, { status });
-        setRefresh((n) => n + 1);
+        refreshData();
       } catch (e) {
         alert(e.message);
       }
@@ -254,7 +236,7 @@ export default function Orders() {
           <p style={{ marginTop:4, fontSize:13.5, color:"var(--text-3)" }}>Crie, edite e acompanhe pedidos.</p>
         </div>
         <div style={{ display:"flex", gap:10, flexWrap:"wrap" }}>
-          <button className="ord-btn" onClick={() => setRefresh((n) => n + 1)}>
+          <button className="ord-btn" onClick={() => refreshData()}>
             <IconRefresh /> <span>Atualizar</span>
           </button>
           <button className="ord-btn-primary" onClick={openCreate}>
