@@ -6,7 +6,6 @@ import "./index.css"; // ← obrigatório
 import "./styles/responsive.css";
 
 import { AuthProvider } from "./auth/AuthContext.jsx";
-import { DataProvider } from "./data/DataContext.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
