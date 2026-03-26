@@ -2,6 +2,8 @@
 
 Interface web do sistema FlowPedidos, construída com React, Vite e Tailwind CSS.
 
+**ACESSO AO SISTEMA:** https://projeto-flowpedidos.vercel.app/
+
 **Stack:** React · Vite · Tailwind CSS · React Router · Recharts
 
 ---
